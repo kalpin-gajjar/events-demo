@@ -1,0 +1,28 @@
+<div class="d-flex flex-column align-items-center">
+  <div class="d-flex bg-info w-100 p-2 text-white justify-content-between align-items-center">
+    <h3>Event Management</h3>
+    <div>
+      <%= button_to 'Add new event', new_event_path, method: :get, class: "nav-link text-info fw-bold rounded-pill border-0"  %>
+    </div>
+  </div>
+</div>
+<% if current_user.events.present? %>
+  <% current_user.events.each do |event| %>
+    <div class="row mt-3">
+      <div class="col-lg-5 mx-lg-auto mt-5">
+        <div class="card shadow border-0">
+          <div class="card-header">
+            <h5 class="text-center"><%= event.title %></h5>
+          </div>
+          <div class="card-body">
+            <p><%= event.description %></p>
+          </div>
+          <div class="card-footer p-3">
+            <%= link_to "Show", event_path(event), class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded w-25 p-2' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+<% end %>

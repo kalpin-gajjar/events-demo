@@ -1,0 +1,39 @@
+<div class="mt-4 mx-5">
+  <h3 class="text-info"><%= @event.title %></h3>
+  <hr>
+  <div class="my-2">
+    <strong>Description:</strong>&nbsp;
+    <%= @event.description %>
+  </div>
+  <div class="my-2">
+    <strong>Start time:</strong>&nbsp;
+    <%= @event.start_date %>
+  </div>
+  <div class="my-2">
+    <strong>End time:</strong>&nbsp;
+    <%= @event.end_date %>
+  </div>
+  <hr>
+  <div class="col-md-5">
+    <h5 class="text-info">Event Participents</h5>
+    <ul class="list-group">
+      <% attendees = @event[:members].split(",").map { |t| { email: t.strip } } %>
+      <% attendees.each do |guest| %>
+        <li class="list-group-item">
+          <div class="media">
+            <div class="media-body">
+              <%= guest[:email] %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <hr>
+  <div class="d-flex">
+    <%= link_to 'Sync With Google', sync_event_with_google_event_path(@event), method: :patch, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2'  %>
+    <%= link_to "Edit", edit_event_path(@event), class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>
+    <%= link_to "Delete", event_path(@event), method: :delete, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>
+    <%= link_to "Back", events_path, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>
+  </div>
+</div>
