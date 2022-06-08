@@ -9,6 +9,25 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       @user.access_token = auth.credentials.token
       @user.expires_at = auth.credentials.expires_at
       @user.refresh_token = auth.credentials.refresh_token
+      @user.provider = auth.provider
+      @user.save!
+      sign_in(@user)
+      redirect_to root_path
+    else
+      session["devise.google_data"] = request.env["omniauth.auth"]
+      redirect_to new_user_registration_url
+    end
+  end
+
+  def microsoft_graph_auth
+    @user = User.from_omniauth_microsoft(request.env["omniauth.auth"])
+    if @user.persisted?
+      flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Google"
+      auth = request.env["omniauth.auth"]
+      @user.access_token = auth.credentials.token
+      @user.expires_at = auth.credentials.expires_at
+      @user.refresh_token = auth.credentials.refresh_token
+      @user.provider = auth.provider
       @user.save!
       sign_in(@user)
       redirect_to root_path

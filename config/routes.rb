@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :events do
     patch :sync_event_with_google, on: :member
+    patch :sync_event_with_microsoft, on: :member
   end
 
   devise_for :users, :controllers => {

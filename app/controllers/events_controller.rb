@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
-  before_action :set_event, only: [:show, :edit, :update, :destroy, :sync_event_with_google]
-
   before_action :authenticate_user!
+
+  before_action :set_event, only: [:show, :edit, :update, :destroy, :sync_event_with_google, :sync_event_with_microsoft]
 
   def index
     @events = current_user.events
@@ -17,56 +17,55 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.new(event_params)
-    respond_to do |format|
-      if @event.save
-        format.html { redirect_to @event, notice: "Event was successfully created." }
-        format.json { render :show, status: :created, location: @event }
-      else
-        format.html { render :new }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
-      end
+    if @event.save
+      redirect_to @event, notice: "Event was successfully created."
+    else
+      render :new
     end
   rescue Google::Apis::ClientError => error
     redirect_to events_path, notice: error.message
   end
 
   def update
-    respond_to do |format|
-      if @event.update(event_params)
-        format.html { redirect_to @event, notice: "Event was successfully updated." }
-        format.json { render :show, status: :ok, location: @event }
-      else
-        format.html { render :edit }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
-      end
+    if @event.update(event_params)
+      redirect_to @event, notice: "Event was successfully updated."
+    else
+      render :edit
     end
   end
 
   def destroy
     @event.destroy
-    respond_to do |format|
-      format.html { redirect_to events_url, notice: "Event was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to events_url, notice: "Event was successfully destroyed."
   end
 
   def sync_event_with_google
-    @event = Event.find(params[:id])
-    ge = @event.get_google_event(@event.google_event_id, @event.user)
-    guests = ge.attendees.map { |at| at.email }.join(", ")
-    @event.update(members: guests, title: ge.summary, description: ge.description, start_date: ge.start.date_time, end_date: ge.end.date_time)
-    redirect_to event_path(@event), notice: "Event has been synced with google successfully."
+    ge = @event.get_google_event(@event.event_id, @event.user)
+    if ge.status == "cancelled"
+      @event.event_id = nil
+      @event.destroy
+      redirect_to events_path, notice: "Event was deleted from google calendar."
+    else
+      guests = ge.attendees.map { |at| at.email }.join(", ")
+      @event.update(members: guests, title: ge.summary, description: ge.description, start_date: ge.start.date_time, end_date: ge.end.date_time)
+      redirect_to event_path(@event), notice: "Event has been synced with google calendar successfully."
+    end
   end
 
-  # GET /tasks/new
+  def sync_event_with_microsoft
+    time_zone = "India Standard Time"
 
-  # def create
-  #   client = get_google_calendar_client current_user
-  #   event = get_event events_params
-  #   client.insert_event("primary", event)
-  #   flash[:notice] = "Task was successfully added."
-  #   redirect_to events_path
-  # end
+    me = @event.get_microsoft_event(@event.user.access_token, time_zone, @event.event_id)
+    if me == "cancelled"
+      @event.event_id = nil
+      @event.destroy
+      redirect_to events_path, notice: "Event was deleted from microsoft calendar."
+    else
+      guests = me["attendees"].map { |a| a["emailAddress"]["address"] }.join(", ")
+      @event.update(members: guests, title: me["subject"], description: me["body"]["content"], start_date: me["start"]["dateTime"], end_date: me["end"]["dateTime"])
+      redirect_to event_path(@event), notice: "Event has been synced with microsoft calendar successfully."
+    end
+  end
 
   private
 

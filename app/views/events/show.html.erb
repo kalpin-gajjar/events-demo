@@ -31,7 +31,11 @@
   </div>
   <hr>
   <div class="d-flex">
-    <%= link_to 'Sync With Google', sync_event_with_google_event_path(@event), method: :patch, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2'  %>
+    <% if @event.user.provider == "google_oauth2" %>
+      <%= link_to 'Sync With Google Calendar', sync_event_with_google_event_path(@event), method: :patch, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2'  %>
+    <% else %>
+      <%= link_to 'Sync With Microsoft Calendar', sync_event_with_microsoft_event_path(@event), method: :patch, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2'  %>
+    <% end %>
     <%= link_to "Edit", edit_event_path(@event), class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>
     <%= link_to "Delete", event_path(@event), method: :delete, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>
     <%= link_to "Back", events_path, class: 'text-decoration-none bg-info text-white fw-bold border-0 rounded p-2 mx-2' %>

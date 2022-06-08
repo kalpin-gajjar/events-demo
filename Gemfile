@@ -68,3 +68,9 @@ gem "omniauth-google-oauth2"
 gem "google-api-client", require: "google/apis/calendar_v3"
 
 gem "omniauth-rails_csrf_protection"
+
+gem "httparty", "~> 0.18.1"
+
+gem "activerecord-session_store", "~> 2.0.0"
+
+gem "omniauth-microsoft_v2_auth"

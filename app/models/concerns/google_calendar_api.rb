@@ -38,14 +38,14 @@ module GoogleCalendarApi
     client = get_google_calendar_client(event.user)
     g_event = get_event(event)
     ge = client.insert_event(Event::CALENDAR_ID, g_event)
-    event.update(google_event_id: ge.id)
+    event.update(event_id: ge.id)
   end
 
   def edit_google_event(event)
     client = get_google_calendar_client(event.user)
-    g_event = client.get_event(Event::CALENDAR_ID, event.google_event_id)
+    g_event = client.get_event(Event::CALENDAR_ID, event.event_id)
     ge = get_event(event)
-    client.update_event(Event::CALENDAR_ID, event.google_event_id, ge)
+    client.update_event(Event::CALENDAR_ID, event.event_id, ge)
   end
 
   def get_event(event)
@@ -85,7 +85,7 @@ module GoogleCalendarApi
 
   def delete_google_event(event)
     client = get_google_calendar_client(event.user)
-    client.delete_event(Event::CALENDAR_ID, event.google_event_id)
+    client.delete_event(Event::CALENDAR_ID, event.event_id)
   end
 
   def get_google_event(event_id, user)
