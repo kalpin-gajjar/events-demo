@@ -190,6 +190,8 @@ GEM
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
     os (1.1.4)
+    paranoia (2.6.0)
+      activerecord (>= 5.1, < 7.1)
     pg (1.3.5)
     public_suffix (4.0.7)
     puma (3.12.6)
@@ -318,6 +320,7 @@ DEPENDENCIES
   omniauth-google-oauth2
   omniauth-microsoft_v2_auth
   omniauth-rails_csrf_protection
+  paranoia (~> 2.2)
   pg (>= 0.18, < 2.0)
   puma (~> 3.11)
   rails (~> 5.2.8)

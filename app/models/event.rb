@@ -5,6 +5,8 @@ class Event < ApplicationRecord
   CALENDAR_ID = "primary"
   belongs_to :user
 
+  acts_as_paranoid
+
   after_create :publish_event_to_cal
   after_update :update_event_on_cal
   before_destroy :remove_event_from_cal

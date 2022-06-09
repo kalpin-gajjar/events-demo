@@ -74,3 +74,5 @@ gem "httparty", "~> 0.18.1"
 gem "activerecord-session_store", "~> 2.0.0"
 
 gem "omniauth-microsoft_v2_auth"
+
+gem "paranoia", "~> 2.2"
